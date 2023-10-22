@@ -2,7 +2,9 @@ package com.projeto.hackaton.api.service;
 
 import com.projeto.hackaton.api.handler.UnauthorizedException;
 import com.projeto.hackaton.api.models.AchievementModel;
+import com.projeto.hackaton.api.models.RecompensaModel;
 import com.projeto.hackaton.domain.entities.Achievement;
+import com.projeto.hackaton.domain.entities.Recompensa;
 import com.projeto.hackaton.domain.entities.Usuario;
 import com.projeto.hackaton.domain.repositories.AchievementConquistadoRepository;
 import com.projeto.hackaton.domain.repositories.AchievementRepository;
@@ -58,4 +60,20 @@ public class AchievementService {
         return new ArrayList<>(achievementModelSet);
     }
 
+    public List<RecompensaModel> getAllRecompensasPorUsuario(String token) {
+        Usuario usuarioLogado = usuarioRepository.findByToken(token).orElseThrow(UnauthorizedException::new);
+        List<Achievement> achievementsConquistados = achievementConquistadoRepository
+                .findAllByUsuarioId(usuarioLogado);
+
+        if (achievementsConquistados.isEmpty()) {
+            return null;
+        }
+
+        List<Recompensa> recompensaList = achievementsConquistados.stream()
+                .map(Achievement::getRecompensaId)
+                .collect(Collectors.toList());
+
+
+        return recompensaList.stream().map(RecompensaModel::new).collect(Collectors.toList());
+    }
 }

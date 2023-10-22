@@ -14,13 +14,13 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @PostMapping("/registrar/visita/cidade/{id}")
-    public void registrarVisitaCidade(@RequestHeader("tokenUser") String token,
+    public void registrarVisitaCidade(@RequestHeader("token") String token,
                                       @PathVariable("id") Integer cidadeId) {
         usuarioService.cadastrarVisitaCidade(token, cidadeId);
     }
 
-    @GetMapping("/data")
-    public UsuarioModel getNomeUsuario(@RequestHeader("tokenUser") String token) {
+    @GetMapping("/dados")
+    public UsuarioModel getNomeUsuario(@RequestHeader("token") String token) {
         return usuarioService.getNomeUsuario(token);
     }
 

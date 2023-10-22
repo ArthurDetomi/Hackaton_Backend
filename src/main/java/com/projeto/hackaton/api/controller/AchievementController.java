@@ -1,6 +1,7 @@
 package com.projeto.hackaton.api.controller;
 
 import com.projeto.hackaton.api.models.AchievementModel;
+import com.projeto.hackaton.api.models.RecompensaModel;
 import com.projeto.hackaton.api.service.AchievementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,10 @@ public class AchievementController {
         return achievementService.getTodosAchievementes(token);
     }
 
+    @GetMapping("/recompensas")
+    public List<RecompensaModel> getTodasRecompensasUsuario(@RequestHeader("token") String token) {
+        return achievementService.getAllRecompensasPorUsuario(token);
+    }
 
 
 
