@@ -10,6 +10,8 @@ import com.projeto.hackaton.domain.repositories.CidadeRepository;
 import com.projeto.hackaton.domain.repositories.CidadeVisitadaRepository;
 import com.projeto.hackaton.domain.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,11 +26,15 @@ public class UsuarioService {
     @Autowired
     private CidadeVisitadaRepository cidadeVisitadaRepository;
 
-    public void cadastrarVisitaCidade(String token, Integer cidadeId) {
+    public ResponseEntity<?> cadastrarVisitaCidade(String token, Integer cidadeId) {
         Usuario usuarioLogado = usuarioRepository.findByToken(token).orElseThrow(UnauthorizedException::new);
         Cidade cidade = cidadeRepository.findById(cidadeId).orElseThrow(NotFoundException::new);
+        if (cidadeVisitadaRepository.findByUsuarioIdAndCidadeId(usuarioLogado, cidade).isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
         CidadeVisitadas cidadeVisitadas = new CidadeVisitadas(usuarioLogado, cidade);
         cidadeVisitadaRepository.save(cidadeVisitadas);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     public UsuarioModel getNomeUsuario(String token) {

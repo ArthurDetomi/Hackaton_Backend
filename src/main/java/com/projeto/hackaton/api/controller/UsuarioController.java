@@ -3,6 +3,7 @@ package com.projeto.hackaton.api.controller;
 import com.projeto.hackaton.api.models.UsuarioModel;
 import com.projeto.hackaton.api.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,9 +15,9 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @PostMapping("/registrar/visita/cidade/{id}")
-    public void registrarVisitaCidade(@RequestHeader("token") String token,
-                                      @PathVariable("id") Integer cidadeId) {
-        usuarioService.cadastrarVisitaCidade(token, cidadeId);
+    public ResponseEntity<?> registrarVisitaCidade(@RequestHeader("token") String token,
+                                                @PathVariable("id") Integer cidadeId) {
+        return usuarioService.cadastrarVisitaCidade(token, cidadeId);
     }
 
     @GetMapping("/dados")

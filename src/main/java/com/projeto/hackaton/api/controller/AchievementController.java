@@ -4,6 +4,7 @@ import com.projeto.hackaton.api.models.AchievementModel;
 import com.projeto.hackaton.api.models.RecompensaModel;
 import com.projeto.hackaton.api.service.AchievementService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,12 @@ public class AchievementController {
     @GetMapping("/recompensas")
     public List<RecompensaModel> getTodasRecompensasUsuario(@RequestHeader("token") String token) {
         return achievementService.getAllRecompensasPorUsuario(token);
+    }
+
+    @GetMapping(value = "/consumir/{id}")
+    public String getConsumido(@RequestHeader("token") String token,
+                             @PathVariable("id") Integer achievementId) {
+        return achievementService.consumirAchievement(achievementId, token);
     }
 
 

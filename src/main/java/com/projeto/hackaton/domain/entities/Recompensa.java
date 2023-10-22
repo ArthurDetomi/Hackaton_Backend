@@ -1,6 +1,7 @@
 package com.projeto.hackaton.domain.entities;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity(name = "recompensas")
@@ -15,7 +16,6 @@ public class Recompensa {
     @ManyToOne
     @JoinColumn(name = "estabelecimento_id")
     private Estabelecimento estabelecimentoId;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

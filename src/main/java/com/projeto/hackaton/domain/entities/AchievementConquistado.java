@@ -18,6 +18,11 @@ public class AchievementConquistado {
     private Usuario usuarioId;
     @Column(name = "data_de_expiracao")
     private Date dataExpiracao;
+    @Column(name = "consumido")
+    private boolean consumido;
+    public  AchievementConquistado() {
+
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -63,4 +68,13 @@ public class AchievementConquistado {
     public void setDataExpiracao(Date dataExpiracao) {
         this.dataExpiracao = dataExpiracao;
     }
+
+    public boolean isConsumido() {
+        return consumido;
+    }
+
+    public void setConsumido(boolean consumido) {
+        this.consumido = consumido;
+    }
+
 }

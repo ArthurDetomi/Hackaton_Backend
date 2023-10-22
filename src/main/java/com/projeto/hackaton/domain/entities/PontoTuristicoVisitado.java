@@ -15,6 +15,10 @@ public class PontoTuristicoVisitado {
     @JoinColumn(name = "id_ponto_turistico")
     private PontoTuristico pontoTuristicoId;
 
+    public PontoTuristicoVisitado() {
+
+    }
+
     public PontoTuristicoVisitado(Usuario usuario, PontoTuristico pontoTuristico) {
         this.pontoTuristicoId = pontoTuristico;
         this.usuarioId = usuario;

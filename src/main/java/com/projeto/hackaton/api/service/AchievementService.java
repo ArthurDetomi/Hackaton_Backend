@@ -1,9 +1,11 @@
 package com.projeto.hackaton.api.service;
 
+import com.projeto.hackaton.api.handler.NotFoundException;
 import com.projeto.hackaton.api.handler.UnauthorizedException;
 import com.projeto.hackaton.api.models.AchievementModel;
 import com.projeto.hackaton.api.models.RecompensaModel;
 import com.projeto.hackaton.domain.entities.Achievement;
+import com.projeto.hackaton.domain.entities.AchievementConquistado;
 import com.projeto.hackaton.domain.entities.Recompensa;
 import com.projeto.hackaton.domain.entities.Usuario;
 import com.projeto.hackaton.domain.repositories.AchievementConquistadoRepository;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -39,11 +42,11 @@ public class AchievementService {
 
     private List<AchievementModel> getTodosAchievementesCompletadosPorUsuario(String token) {
         Usuario usuarioLogado = usuarioRepository.findByToken(token).orElseThrow(UnauthorizedException::new);
-        List<Achievement> achievementsConquistados = achievementConquistadoRepository
+        List<AchievementConquistado> achievementsConquistados = achievementConquistadoRepository
                 .findAllByUsuarioId(usuarioLogado);
 
         Set<AchievementModel> achievementModelSet = achievementsConquistados.stream().map(
-                achievement -> new AchievementModel(achievement, true)
+                achievement -> new AchievementModel(achievement.getAchievementId(), true)
         ).collect(Collectors.toSet());
 
         List<Achievement> achievementsList = achievementRepository.findAll();
@@ -62,7 +65,7 @@ public class AchievementService {
 
     public List<RecompensaModel> getAllRecompensasPorUsuario(String token) {
         Usuario usuarioLogado = usuarioRepository.findByToken(token).orElseThrow(UnauthorizedException::new);
-        List<Achievement> achievementsConquistados = achievementConquistadoRepository
+        List<AchievementConquistado> achievementsConquistados = achievementConquistadoRepository
                 .findAllByUsuarioId(usuarioLogado);
 
         if (achievementsConquistados.isEmpty()) {
@@ -70,10 +73,31 @@ public class AchievementService {
         }
 
         List<Recompensa> recompensaList = achievementsConquistados.stream()
-                .map(Achievement::getRecompensaId)
+                .map(achievementConquistado -> {
+                    Achievement achievement = achievementConquistado.getAchievementId();
+                    return achievement.getRecompensaId();
+                })
                 .collect(Collectors.toList());
 
 
         return recompensaList.stream().map(RecompensaModel::new).collect(Collectors.toList());
+    }
+
+    public String consumirAchievement(Integer achievementId, String token) {
+        Usuario usuario = usuarioRepository.findByToken(token)
+                .orElseThrow(NotFoundException::new);
+        Achievement achievement = achievementRepository.findById(achievementId)
+                .orElseThrow(UnauthorizedException::new);
+        AchievementConquistado achievementConquistado =
+                achievementConquistadoRepository.findByUsuarioIdAndAchievementId(usuario, achievement)
+                        .orElseThrow(NotFoundException::new);
+
+        if (achievementConquistado.getDataExpiracao().before(new Date())) {
+            return "Cupom Expirado";
+        }
+
+        achievementConquistado.setConsumido(true);
+        achievementConquistadoRepository.save(achievementConquistado);
+        return "Cupom consumido com sucesso!";
     }
 }
