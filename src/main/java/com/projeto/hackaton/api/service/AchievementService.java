@@ -37,7 +37,9 @@ public class AchievementService {
             return getTodosAchievementesCompletadosPorUsuario(token);
         }
 
-        return achievementRepository.findAll().stream().map(AchievementModel::new).collect(Collectors.toList());
+        return achievementRepository.findAll().stream().map(achivement ->
+                        new AchievementModel(achivement, false, false))
+                .collect(Collectors.toList());
     }
 
     private List<AchievementModel> getTodosAchievementesCompletadosPorUsuario(String token) {
@@ -46,14 +48,14 @@ public class AchievementService {
                 .findAllByUsuarioId(usuarioLogado);
 
         Set<AchievementModel> achievementModelSet = achievementsConquistados.stream().map(
-                achievement -> new AchievementModel(achievement.getAchievementId(), true)
+                achievement -> new AchievementModel(achievement.getAchievementId(), true, achievement.isConsumido())
         ).collect(Collectors.toSet());
 
         List<Achievement> achievementsList = achievementRepository.findAll();
 
         achievementsList.forEach(
                 achievement -> {
-                    AchievementModel achievementModel = new AchievementModel(achievement);
+                    AchievementModel achievementModel = new AchievementModel(achievement, false, false);
                     if (!achievementModelSet.contains(achievementModel)) {
                         achievementModelSet.add(achievementModel);
                     }
@@ -61,26 +63,6 @@ public class AchievementService {
         );
 
         return new ArrayList<>(achievementModelSet);
-    }
-
-    public List<RecompensaModel> getAllRecompensasPorUsuario(String token) {
-        Usuario usuarioLogado = usuarioRepository.findByToken(token).orElseThrow(UnauthorizedException::new);
-        List<AchievementConquistado> achievementsConquistados = achievementConquistadoRepository
-                .findAllByUsuarioId(usuarioLogado);
-
-        if (achievementsConquistados.isEmpty()) {
-            return null;
-        }
-
-        List<Recompensa> recompensaList = achievementsConquistados.stream()
-                .map(achievementConquistado -> {
-                    Achievement achievement = achievementConquistado.getAchievementId();
-                    return achievement.getRecompensaId();
-                })
-                .collect(Collectors.toList());
-
-
-        return recompensaList.stream().map(RecompensaModel::new).collect(Collectors.toList());
     }
 
     public String consumirAchievement(Integer achievementId, String token) {

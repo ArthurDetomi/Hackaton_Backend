@@ -9,11 +9,16 @@ import java.util.Objects;
 public class AchievementModel {
 
     private Integer id;
+    @JsonProperty("finishDate")
     private Date endDate;
     private String name;
     private String description;
     @JsonProperty("isComplete")
     private boolean completeAchievement;
+    @JsonProperty("isConsumed")
+    private boolean consumed;
+
+    private RecompensaModel reward;
 
     public AchievementModel(Achievement achievement) {
         this.id = achievement.getId();
@@ -22,9 +27,11 @@ public class AchievementModel {
         this.description = achievement.getDescricao();
     }
 
-    public AchievementModel(Achievement achievement, boolean conquistado) {
+    public AchievementModel(Achievement achievement, boolean conquistado, boolean consumido) {
         this(achievement);
         this.completeAchievement = conquistado;
+        this.consumed = consumido;
+        this.reward = new RecompensaModel(achievement.getRecompensaId());
     }
 
     @Override
@@ -78,5 +85,21 @@ public class AchievementModel {
 
     public void setCompleteAchievement(boolean completeAchievement) {
         this.completeAchievement = completeAchievement;
+    }
+
+    public boolean isConsumed() {
+        return consumed;
+    }
+
+    public void setConsumed(boolean consumed) {
+        this.consumed = consumed;
+    }
+
+    public RecompensaModel getReward() {
+        return reward;
+    }
+
+    public void setReward(RecompensaModel reward) {
+        this.reward = reward;
     }
 }

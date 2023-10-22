@@ -1,5 +1,6 @@
 package com.projeto.hackaton.api.models;
 
+import com.projeto.hackaton.domain.entities.Achievement;
 import com.projeto.hackaton.domain.entities.Recompensa;
 
 public class RecompensaModel {

@@ -18,17 +18,12 @@ public class AchievementController {
     private AchievementService achievementService;
 
     @GetMapping("/todos")
-    public List<AchievementModel> getAllAchievementes(@RequestHeader("token") String token) {
+    public List<AchievementModel> getAllAchievementes(@RequestHeader(value = "token", required = false) String token) {
         return achievementService.getTodosAchievementes(token);
     }
 
-    @GetMapping("/recompensas")
-    public List<RecompensaModel> getTodasRecompensasUsuario(@RequestHeader("token") String token) {
-        return achievementService.getAllRecompensasPorUsuario(token);
-    }
-
     @GetMapping(value = "/consumir/{id}")
-    public String getConsumido(@RequestHeader("token") String token,
+    public String getConsumido(@RequestParam("token") String token,
                              @PathVariable("id") Integer achievementId) {
         return achievementService.consumirAchievement(achievementId, token);
     }
